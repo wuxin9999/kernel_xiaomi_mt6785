@@ -40,7 +40,7 @@ if [[ $1 = "-b" || $1 = "--build" ]]; then
 	PATH=$PWD/toolchain/bin:$PATH
 	mkdir -p out
 	make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 $DEFCONFIG
-        exec 2> >(tee -a out/error.log >&2)
+        rm -rf out/error.log && exec 2> >(tee -a out/error.log >&2)
 	echo -e ""
 	echo -e ""
 	echo -e "*****************************"
@@ -55,12 +55,19 @@ if [[ $1 = "-b" || $1 = "--build" ]]; then
 	kernel="out/arch/arm64/boot/Image.gz-dtb"
 
 	if [ -f "$kernel" ]; then
-		rm *.zip 2>/dev/null
-		# Set kernel name and version
 		hash=$(git log -n 1 --pretty=format:'%h' | cut -c 1-7)
 		lastcommit=$hash
 		REVISION=NoVA-$(git rev-parse --abbrev-ref HEAD)
 		ZIPNAME=""$REVISION"-begonia-$(date '+%d.%m.%y-%H%M').zip"
+
+		if [ -f "$ZIPNAME" ]; then
+			counter=1
+			while [ -f "${ZIPNAME%.zip}-$counter.zip" ]; do
+				((counter++))
+			done
+			ZIPNAME="${ZIPNAME%.zip}-$counter.zip"
+		fi
+
 		echo -e ""
 		echo -e ""
 		echo -e "********************************************"
@@ -68,6 +75,7 @@ if [[ $1 = "-b" || $1 = "--build" ]]; then
 		echo -e "********************************************"
 		echo -e ""
 		echo -e ""
+
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR Anykernel
 	elif ! git clone -q https://github.com/Wahid7852/Anykernel; then
