@@ -11,7 +11,7 @@ DEFCONFIG="begonia_user_defconfig"
 
 # Exports for shits and giggles
 export KBUILD_BUILD_USER=NoVA
-export KBUILD_BUILD_HOST=Abdul7852
+export KBUILD_BUILD_HOST=SHADOW
 
 # Install needed tools
 if [[ $1 = "-t" || $1 = "--tools" ]]; then
@@ -78,7 +78,7 @@ if [[ $1 = "-b" || $1 = "--build" ]]; then
 
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR Anykernel
-	elif ! git clone -q https://github.com/Wahid7852/Anykernel; then
+	elif ! git clone -q https://github.com/SHADOW-REX/Anykernel; then
 			echo -e "\nAnykernel repo not found locally and couldn't clone from GitHub! Aborting..."
 	fi
 		cp $kernel Anykernel
